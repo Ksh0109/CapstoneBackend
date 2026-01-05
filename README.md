@@ -41,5 +41,5 @@ gradlew.bootRun
 서버가 켜지면 아래 주소로 접속 가능합니다
 <br> 서버 상태 확인 : http://localhost:8080/api/status
 <br> Swagger API 명세서 : http://localhost:8080/swagger-ui/index.html
-<br>각종 추가 기능들은 현재 개발중입니다.
+<br> 아직 초기 설정만 해둔 상태입니다
 <br>문제가 생기면 연락주세요
