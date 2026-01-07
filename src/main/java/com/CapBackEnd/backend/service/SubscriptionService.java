@@ -6,7 +6,7 @@ import com.CapBackEnd.backend.entity.Role;
 import com.CapBackEnd.backend.entity.Subscription;
 import com.CapBackEnd.backend.entity.SubscriptionMember;
 import com.CapBackEnd.backend.entity.User;
-import com.CapBackEnd.backend.repository.SubScriptionMemberRepository;
+import com.CapBackEnd.backend.repository.SubscriptionMemberRepository;
 import com.CapBackEnd.backend.repository.SubscriptionRepository;
 import com.CapBackEnd.backend.repository.UserRepository;
 import jakarta.transaction.Transactional;
@@ -20,7 +20,7 @@ import java.util.List;
 public class SubscriptionService {
 
     private final SubscriptionRepository subscriptionRepository;
-    private final SubScriptionMemberRepository subscriptionMemberRepository;
+    private final SubscriptionMemberRepository subscriptionMemberRepository;
     private final UserRepository userRepository;
 
     // 구독 추가하기 ( 파티 생성 )

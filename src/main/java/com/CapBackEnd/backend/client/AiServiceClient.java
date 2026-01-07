@@ -6,7 +6,7 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-@FeignClient(name = "ai-service", url="$(ai.server.url}")
+@FeignClient(name = "ai-service", url="${ai.server.url}")
 public interface AiServiceClient {
     @PostMapping("/api/v1/anaylze")
     AiAnalysisResponse analyzeSubscription(@RequestBody AiAnalysisRequest request);
