@@ -5,6 +5,9 @@ import com.CapBackEnd.backend.entity.SubscriptionMember;
 import lombok.Builder;
 import lombok.Getter;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Getter
 @Builder
 public class SubscriptionResponse {
@@ -14,17 +17,40 @@ public class SubscriptionResponse {
     private String payDate;
     private String cycle;
     private String themeColor;
-    private Role role;        // LEADER (내가 리더인지 확인용)
 
-    public static SubscriptionResponse from(SubscriptionMember member) {
+    private Boolean isLeader;
+    private List<MemberDto> members;
+
+    @Getter
+    @Builder
+    public static class MemberDto {
+        private Long id;
+        private String name;
+    }
+
+    // Entity -> DTO 변환
+    public static SubscriptionResponse of(SubscriptionMember myMember, List<SubscriptionMember> allMembers) {
+        boolean isLeader = myMember.getRole() == Role.LEADER;
+
+        // 내가 리더면 전체 멤버 보여주고, 아니면 빈 리스트
+        List<MemberDto> memberDtos = isLeader ?
+                allMembers.stream()
+                        .map(m -> MemberDto.builder()
+                                .id(m.getUser().getId())
+                                .name(m.getUser().getName())
+                                .build())
+                        .collect(Collectors.toList())
+                : List.of();
+
         return SubscriptionResponse.builder()
-                .id(member.getSubscription().getId())
-                .name(member.getSubscription().getName())
-                .price(member.getSubscription().getPrice())
-                .payDate(member.getSubscription().getPayDate())
-                .cycle(member.getSubscription().getCycle())
-                .themeColor(member.getSubscription().getThemeColor())
-                .role(member.getRole())
+                .id(myMember.getSubscription().getId())
+                .name(myMember.getSubscription().getName())
+                .price(myMember.getSubscription().getPrice())
+                .cycle(myMember.getSubscription().getCycle())
+                .payDate(myMember.getSubscription().getPayDate())
+                .themeColor(myMember.getSubscription().getThemeColor())
+                .isLeader(isLeader)
+                .members(memberDtos)
                 .build();
     }
 }

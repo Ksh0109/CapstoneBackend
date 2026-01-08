@@ -13,6 +13,8 @@ public class SubscriptionSaveRequest {
     private String payDate;   // "25"
     private String themeColor;// "#E50914"
 
+    private Long leaderId;
+
     public Subscription toEntity() {
         return Subscription.builder()
                 .name(name)

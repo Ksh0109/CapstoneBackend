@@ -54,7 +54,7 @@ public class AiService {
         AiReport report = AiReport.builder()
                 .user(user)
                 .score(response.getScore())
-                .comment(response.getComment())
+                .advice(response.getAdvice())
                 .build();
 
         aiReportRepository.save(report);

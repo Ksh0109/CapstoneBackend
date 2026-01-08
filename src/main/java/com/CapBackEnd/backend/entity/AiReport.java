@@ -22,18 +22,40 @@ public class AiReport {
     @JoinColumn(name = "user_id")
     private User user;
 
+    @Column(name = "report_month")
+    private String reportMonth;
+
+    private Integer currentTotal;
     private Integer score;
+    private String status;
+
+    private Integer predictedTotal;
+    private String predictionComment;
+
+    private String summary;
 
     @Column(columnDefinition = "TEXT")
-    private String comment;
+    private String advice;
+
+    // 그래프 데이터
+    @Column(name = "category_json", columnDefinition = "TEXT")
+    private String categoryJson;
 
     @CreationTimestamp
     private LocalDateTime analyzedAt;
 
     @Builder
-    public AiReport(User user, Integer score, String comment) {
+    public AiReport(User user, String reportMonth, Integer currentTotal, Integer score, String status,
+                    Integer predictedTotal, String predictionComment, String summary, String advice, String categoryJson) {
         this.user = user;
+        this.reportMonth = reportMonth;
+        this.currentTotal = currentTotal;
         this.score = score;
-        this.comment = comment;
+        this.status = status;
+        this.predictedTotal = predictedTotal;
+        this.predictionComment = predictionComment;
+        this.summary = summary;
+        this.advice = advice;
+        this.categoryJson = categoryJson;
     }
 }

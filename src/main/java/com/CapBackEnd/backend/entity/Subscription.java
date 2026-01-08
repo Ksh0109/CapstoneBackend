@@ -41,4 +41,10 @@ public class Subscription {
         this.themeColor = themeColor;
         this.imageUrl = imageUrl;
     }
+
+    public void update(Integer price, String payDate, String themeColor){
+        if (price != null) this.price = price;
+        if (payDate != null) this.payDate = payDate;
+        if (themeColor != null) this.themeColor = themeColor;
+    }
 }

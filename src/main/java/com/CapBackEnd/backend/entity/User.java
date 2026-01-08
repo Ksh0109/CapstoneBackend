@@ -17,6 +17,7 @@ public class User {
     @Column(unique = true, nullable = false)
     private String email;
 
+    @Column(nullable = false, unique = true)
     private String name;
 
     private String password;
@@ -34,5 +35,10 @@ public class User {
         this.name = name;
         this.password = password;
         this.isNotifyEnabled = isNotifyEnabled;
+    }
+
+    public void updateSettings(Boolean isNotifyEnabled, String name) {
+        if (isNotifyEnabled != null) this.isNotifyEnabled = isNotifyEnabled;
+        if (name != null) this.name = name;
     }
 }
