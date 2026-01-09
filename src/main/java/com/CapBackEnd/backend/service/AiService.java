@@ -9,9 +9,11 @@ import com.CapBackEnd.backend.entity.User;
 import com.CapBackEnd.backend.repository.AiReportRepository;
 import com.CapBackEnd.backend.repository.SubscriptionMemberRepository;
 import com.CapBackEnd.backend.repository.UserRepository;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -25,6 +27,7 @@ public class AiService {
     private final UserRepository userRepository;
     private final SubscriptionMemberRepository subscriptionMemberRepository;
     private final AiReportRepository aiReportRepository;
+    private final ObjectMapper objectMapper;
 
     @Transactional
     public AiAnalysisResponse runAnalysis(Long userId) {
@@ -35,7 +38,7 @@ public class AiService {
         // 해당 유저의 구독 목록 싹 긁어오기
         List<SubscriptionMember> members = subscriptionMemberRepository.findByUser(user);
 
-        // 구독 서비스 이름만 추출
+        // 구독 정보에서 필요한 정보만 추출.
         List<String> subNames = members.stream()
                 .map(m -> m.getSubscription().getName())
                 .collect(Collectors.toList());
@@ -50,11 +53,25 @@ public class AiService {
         // 파이썬 서버 호출
         AiAnalysisResponse response = aiServiceClient.analyzeSubscription(request);
 
-        // 결과 DB에 저장하기 (이게 서비스의 핵심 역할!)
+        // 결과 DB에 저장
+        String categoryJson = "[]";
+        try {
+            categoryJson = objectMapper.writeValueAsString(response.getCategoryList());
+        }catch (JsonProcessingException e){
+            e.printStackTrace();
+        }
+
         AiReport report = AiReport.builder()
                 .user(user)
+                .reportMonth(response.getReportMonth())
+                .currentTotal(response.getCurrentTotal())
                 .score(response.getScore())
+                .status(response.getStatus())
+                .predictedTotal(response.getPredictedTotal())
+                .predictionComment(response.getPredictionComment())
+                .summary(response.getSummary())
                 .advice(response.getAdvice())
+                .categoryJson(categoryJson) // 변환된 JSON 문자열 저장
                 .build();
 
         aiReportRepository.save(report);
