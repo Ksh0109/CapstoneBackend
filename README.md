@@ -73,6 +73,6 @@ graph TD
     Security --> Controller[🎮 Controller]
     Controller --> Service[⚙️ Service]
     Service --> Repository[🗄️ MySQL DB]
-    Service -->|Feign Client| AI[🐍 AI Analysis Server (Python)]
+    Service -->|Feign Client| AI["🐍 AI Analysis Server (Python)"]
 ```
 
