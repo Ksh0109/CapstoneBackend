@@ -38,8 +38,41 @@ gradlew.bootRun
 ```
 
 ### 3단계 : 접속 확인
-서버가 켜지면 아래 주소로 접속 가능합니다
+서버가 켜지면 아래 주소로 접속 가능합니다 ( 내부 )
 <br> 서버 상태 확인 : http://localhost:8080/api/status
 <br> Swagger API 명세서 : http://localhost:8080/swagger-ui/index.html
+
+외부 환경에서 접속하실 때는 다음 주소로 접속해주세요. 
+<br> 현재 개발 단계에서는 Ngrok을 사용하고 있습니다.
+<br> 배포 전까지는 이 방식을 사용하여야 하니 양해 부탁드립니다.
+
+<br> Base URL : 변경될때마다 공지하겠습니다.
+
+<br> Swagger API 명세서(외부) : {Base URL}swagger-ui/index.html
+<br> 사용 예시 : https://{Base URL}/api/auth/login
+
+## 인증(Authentication) 테스트 방법
+1. Swagger에서 Auth 태그의 로그인(Sign-in) API를 호출합니다.
+
+2. 응답받은 token 값을 복사합니다. (따옴표 제외)
+
+3. 우측 상단 Authorize 버튼을 클릭합니다.
+
+4. 입력창에 토큰을 붙여넣고 Authorize -> Close를 누릅니다.
+
+5. 이제 자물쇠가 잠긴 상태에서 다른 API를 테스트할 수 있습니다.
+
+
+
 <br> 아직 초기 설정만 해둔 상태입니다
 <br>문제가 생기면 연락주세요
+
+```mermaid
+graph TD
+    Client[📱 Frontend / App] -->|JWT Token| Security[🛡️ Spring Security]
+    Security --> Controller[🎮 Controller]
+    Controller --> Service[⚙️ Service]
+    Service --> Repository[🗄️ MySQL DB]
+    Service -->|Feign Client| AI[🐍 AI Analysis Server (Python)]
+```
+
