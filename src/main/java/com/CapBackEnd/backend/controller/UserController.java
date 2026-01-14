@@ -21,14 +21,14 @@ public class UserController {
     private final UserService userService;
 
     // 내 정보 조회
-    @GetMapping("/auth/me")
+    @GetMapping("/api/user/me")
     @Operation(summary = "내 정보 조회", description = "토큰 유효성 검사 / 나의 최신 정보 반환")
     public ResponseEntity<AuthResponse.UserDto> getMyInfo(@AuthenticationPrincipal Long userId) {
         return ResponseEntity.ok(userService.getMyInfo(userId));
     }
 
     // 설정 변경
-    @PatchMapping("/user/settings")
+    @PatchMapping("/api/user/settings")
     @Operation(summary = "유저 설정 변경", description = "닉네임 / 알림 설정 변경")
     public ResponseEntity<AuthResponse.UserDto> updateSettings(@AuthenticationPrincipal Long userId,
                                                                @RequestBody UserSettingsRequest request) {
