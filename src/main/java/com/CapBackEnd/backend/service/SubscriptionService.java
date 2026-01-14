@@ -83,7 +83,7 @@ public class SubscriptionService {
     @Transactional
     public void updateSubscription(Long userId, Long subscriptionId, SubscriptionSaveRequest request) {
         // 1. 내가 이 방의 멤버인지 확인
-        SubscriptionMember member = subscriptionMemberRepository.findByUserAndSubscriptionId(userId, subscriptionId)
+        SubscriptionMember member = subscriptionMemberRepository.findByUserIdAndSubscriptionId(userId, subscriptionId)
                 .orElseThrow(() -> new IllegalArgumentException("가입된 정보가 없습니다."));
 
         // 2. 구독 정보 가져오기
@@ -95,7 +95,7 @@ public class SubscriptionService {
     // 구독 삭제 / 파티 탈퇴 (DELETE)
     @Transactional
     public void deleteSubscription(Long userId, Long subscriptionId) {
-        SubscriptionMember member = subscriptionMemberRepository.findByUserAndSubscriptionId(userId, subscriptionId)
+        SubscriptionMember member = subscriptionMemberRepository.findByUserIdAndSubscriptionId(userId, subscriptionId)
                 .orElseThrow(() -> new IllegalArgumentException("가입된 정보가 없습니다."));
 
         Subscription subscription = member.getSubscription();

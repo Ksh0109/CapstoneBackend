@@ -14,7 +14,7 @@ public interface SubscriptionMemberRepository extends JpaRepository<Subscription
     // 특정 유저의 구독 목록 조회
     List<SubscriptionMember> findByUser(User user);
     // 유저 ID와 구독 방 번호로 내 명단 찾기
-    Optional<SubscriptionMember> findByUserAndSubscriptionId(Long userId, Long subscriptionId);
+    Optional<SubscriptionMember> findByUserIdAndSubscriptionId(Long userId, Long subscriptionId);
     // 중복 가입 방지용 ( 이미 이 방에 들어왔는지 확인 )
     boolean existsByUserAndSubscription(User user, Subscription subscription);
 }
