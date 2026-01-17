@@ -38,10 +38,17 @@ public class SubscriptionService {
 
         // 경우 1 : 파티 합류 ( leaderId가 있음 )
         if(request.getLeaderId() != null) {
-        // 일단 내가 만들면 무조건 리더인걸로 하고, 나중에 고도화
-            subscription = request.toEntity();
-            subscriptionRepository.save(subscription);
-            role = Role.LEADER;
+            subscription = subscriptionRepository.findById(request.getLeaderId())
+                    .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 구독 방입니다."));
+        // 가입된지 체크 후 저장
+            //subscription = request.toEntity();
+            //subscriptionRepository.save(subscription);
+
+            if(subscriptionMemberRepository.existsByUserAndSubscription(user,subscription)) {
+                throw new IllegalArgumentException("이미 가입되어 있는 구독입니다.");
+            }
+            role = Role.MEMBER;
+            //role = Role.LEADER;
         }else {
             // 경우 2 : 신규 생성 ( 내가 방장 )
             subscription = request.toEntity();
@@ -90,7 +97,7 @@ public class SubscriptionService {
         Subscription subscription = member.getSubscription();
 
         // 3. 정보 업데이트 (방장만 가능한지 체크하는 로직은 나중에 추가 가능)
-        subscription.update(request.getPrice(), request.getPayDate(), request.getThemeColor());
+        subscription.update(request.getName(),request.getPrice(), request.getPayDate(), request.getThemeColor());
     }
     // 구독 삭제 / 파티 탈퇴 (DELETE)
     @Transactional

@@ -42,7 +42,8 @@ public class Subscription {
         this.imageUrl = imageUrl;
     }
 
-    public void update(Integer price, String payDate, String themeColor){
+    public void update(String name,Integer price, String payDate, String themeColor){
+        if (name != null) this.name = name;
         if (price != null) this.price = price;
         if (payDate != null) this.payDate = payDate;
         if (themeColor != null) this.themeColor = themeColor;
