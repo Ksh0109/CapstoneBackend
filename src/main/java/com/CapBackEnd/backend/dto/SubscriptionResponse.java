@@ -32,15 +32,12 @@ public class SubscriptionResponse {
     public static SubscriptionResponse of(SubscriptionMember myMember, List<SubscriptionMember> allMembers) {
         boolean isLeader = myMember.getRole() == Role.LEADER;
 
-        // 내가 리더면 전체 멤버 보여주고, 아니면 빈 리스트
-        List<MemberDto> memberDtos = isLeader ?
-                allMembers.stream()
+        List<MemberDto> memberDtos = allMembers.stream()
                         .map(m -> MemberDto.builder()
                                 .id(m.getUser().getId())
                                 .name(m.getUser().getName())
                                 .build())
-                        .collect(Collectors.toList())
-                : List.of();
+                        .collect(Collectors.toList());
 
         return SubscriptionResponse.builder()
                 .id(myMember.getSubscription().getId())
