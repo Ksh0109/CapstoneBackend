@@ -41,4 +41,7 @@ public class User {
         if (isNotifyEnabled != null) this.isNotifyEnabled = isNotifyEnabled;
         if (name != null) this.name = name;
     }
+    public void updatePassword(String newPassword) {
+        this.password = newPassword;
+    }
 }

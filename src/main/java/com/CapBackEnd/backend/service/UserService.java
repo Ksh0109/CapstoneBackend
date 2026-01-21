@@ -1,12 +1,17 @@
 package com.CapBackEnd.backend.service;
 
 import com.CapBackEnd.backend.dto.AuthResponse;
+import com.CapBackEnd.backend.dto.PasswordChangeRequest;
+import com.CapBackEnd.backend.dto.PasswordResetRequest;
 import com.CapBackEnd.backend.dto.UserSettingsRequest;
 import com.CapBackEnd.backend.entity.User;
 import com.CapBackEnd.backend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.UUID;
 
 // 회원 관리용 서비스
 @Service
@@ -14,6 +19,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final EmailService emailService;
 
     // 내 정보 조회 ( 앱 켤때 /auth/me 호출용 )
     @Transactional
@@ -45,8 +52,35 @@ public class UserService {
                 .name(user.getName())
                 .isNotifyEnabled(user.isNotifyEnabled())
                 .build();
+    }
 
 
+    public void resetPassword(PasswordResetRequest request){
+        User user = userRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new IllegalArgumentException("가입되지 않은 이메일입니다."));
 
+        // 임시 비밀번호 생성 (8자리로 끊음)
+        String tempPassword = UUID.randomUUID().toString().substring(0,8);
+
+        // DB에 비밀번호 덮어쓰기 (Encode 해줘야함)
+        user.updatePassword(passwordEncoder.encode(tempPassword));
+
+        // 이메일 전송
+        String subject = "[캡스톤] 임시 비밀번호 발급 안내";
+        String text = "회원님의 임시 비밀번호는 아래와 같습니다.\n\n" +
+                "임시 비밀번호: " + tempPassword + "\n\n" +
+                "로그인 후 반드시 비밀번호를 변경해주세요.";
+
+        emailService.sendEmail(user.getEmail(), subject, text);
+    }
+
+    // 비밀번호 변경
+    public void changePassword(Long userId, PasswordChangeRequest request) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+        if(!passwordEncoder.matches(request.getCurrentPassword(), user.getPassword())) {
+            throw new IllegalArgumentException("현재 비밀번호가 일치하지 않습니다.");
+        }
+        user.updatePassword(passwordEncoder.encode(request.getNewPassword()));
     }
 }

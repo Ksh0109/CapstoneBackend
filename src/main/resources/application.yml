@@ -5,7 +5,7 @@ spring:
   datasource:
     url: jdbc:mysql://localhost:3306/subscription_db?useSSL=false&allowPublicKeyRetrieval=true&characterEncoding=UTF-8&serverTimezone=UTC
     username: root
-    password: "1234"
+    password: ${DB_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:
@@ -15,6 +15,22 @@ spring:
       hibernate:
         format_sql: true
         show_sql: true
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: 26capproj1234@gmail.com
+    password: ${MAIL_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+          connectiontimeout: 5000
+          timeout: 5000
+          writetimeout: 5000
 
 server:
   port: 8080
@@ -26,5 +42,6 @@ ai:
 
 
 jwt:
-  secret: VlwEyVlpkZpEQBk3F8bF9dZ9xC3kF8vE9dZ9xVlwEyVlpkZpEQBk3F8bF9dZ9xC3kF8vE9dZ9x # (??? ?? ???)
+  secret: ${JWT_SECRET} # (??? ?? ???)
   expiration: 86400000
+

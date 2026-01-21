@@ -2,8 +2,10 @@ package com.CapBackEnd.backend.controller;
 
 import com.CapBackEnd.backend.dto.AuthResponse;
 import com.CapBackEnd.backend.dto.LoginRequest;
+import com.CapBackEnd.backend.dto.PasswordResetRequest;
 import com.CapBackEnd.backend.dto.SignupRequest;
 import com.CapBackEnd.backend.service.AuthService;
+import com.CapBackEnd.backend.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Map;
+
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
@@ -20,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
 
     private final AuthService authService;
+    private final UserService userService;
 
     @PostMapping("/signup")
     @Operation(summary = "회원가입", description = "회원가입 성공 시 토큰과 유저 정보를 반환")
@@ -33,4 +38,10 @@ public class AuthController {
         return ResponseEntity.ok(authService.login(request));
     }
 
+    // 임시 비밀번호 발급
+    @PostMapping("/password/reset")
+    public ResponseEntity<?> resetPassword(@RequestBody PasswordResetRequest request) {
+        userService.resetPassword(request);
+        return ResponseEntity.ok(Map.of("message","이메일로 임시 비밀번호가 전송되었습니다."));
+    }
 }

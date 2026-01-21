@@ -1,6 +1,7 @@
 package com.CapBackEnd.backend.controller;
 
 import com.CapBackEnd.backend.dto.AuthResponse;
+import com.CapBackEnd.backend.dto.PasswordChangeRequest;
 import com.CapBackEnd.backend.dto.UserSettingsRequest;
 import com.CapBackEnd.backend.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -12,6 +13,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -35,4 +38,16 @@ public class UserController {
         return ResponseEntity.ok(userService.updateSettings(userId,request));
     }
 
+    // 비밀번호 변경
+    @PatchMapping("/api/user/password")
+    public ResponseEntity<?> changePassword(
+            @AuthenticationPrincipal Long userId,
+            @RequestBody PasswordChangeRequest request) {
+        try {
+            userService.changePassword(userId,request);
+            return ResponseEntity.ok(Map.of("message", "비밀번호가 변경되었습니다."));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
+        }
+    }
 }
