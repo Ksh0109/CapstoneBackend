@@ -40,6 +40,7 @@ public class UserController {
 
     // 비밀번호 변경
     @PatchMapping("/api/user/password")
+    @Operation(summary = "비밀번호 변경", description = "비밀번호 변경 / 결과 메시지 반환")
     public ResponseEntity<?> changePassword(
             @AuthenticationPrincipal Long userId,
             @RequestBody PasswordChangeRequest request) {

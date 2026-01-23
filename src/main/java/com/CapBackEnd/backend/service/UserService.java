@@ -4,13 +4,19 @@ import com.CapBackEnd.backend.dto.AuthResponse;
 import com.CapBackEnd.backend.dto.PasswordChangeRequest;
 import com.CapBackEnd.backend.dto.PasswordResetRequest;
 import com.CapBackEnd.backend.dto.UserSettingsRequest;
+import com.CapBackEnd.backend.entity.Role;
+import com.CapBackEnd.backend.entity.Subscription;
+import com.CapBackEnd.backend.entity.SubscriptionMember;
 import com.CapBackEnd.backend.entity.User;
+import com.CapBackEnd.backend.repository.SubscriptionMemberRepository;
+import com.CapBackEnd.backend.repository.SubscriptionRepository;
 import com.CapBackEnd.backend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.UUID;
 
 // 회원 관리용 서비스
@@ -21,6 +27,8 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final EmailService emailService;
+    private final SubscriptionMemberRepository subscriptionMemberRepository;
+    private final SubscriptionRepository subscriptionRepository;
 
     // 내 정보 조회 ( 앱 켤때 /auth/me 호출용 )
     @Transactional
@@ -54,7 +62,7 @@ public class UserService {
                 .build();
     }
 
-
+    @Transactional
     public void resetPassword(PasswordResetRequest request){
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new IllegalArgumentException("가입되지 않은 이메일입니다."));
@@ -74,6 +82,7 @@ public class UserService {
         emailService.sendEmail(user.getEmail(), subject, text);
     }
 
+    @Transactional
     // 비밀번호 변경
     public void changePassword(Long userId, PasswordChangeRequest request) {
         User user = userRepository.findById(userId)
@@ -83,4 +92,36 @@ public class UserService {
         }
         user.updatePassword(passwordEncoder.encode(request.getNewPassword()));
     }
+
+    @Transactional
+    public void deleteAccount(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+
+        // 내가 참여 중인 모든 구독 정보 조회
+        List<SubscriptionMember> myMemberships = subscriptionMemberRepository.findAllByUser(user);
+
+        // 구독 정보 하나씩 순회하며 정리
+        for(SubscriptionMember member : myMemberships) {
+            Subscription subscription = member.getSubscription();
+
+            if(member.getRole() == Role.LEADER) {
+                // 내가 방장인 경우 -> 파티 폭파
+
+                // 해당 방에 속한 모든 멤버 조회 및 삭제
+                List<SubscriptionMember> allMembers = subscriptionMemberRepository.findBySubscription(subscription);
+                subscriptionMemberRepository.deleteAll(allMembers);
+
+                // 방 삭제
+                subscriptionRepository.delete(subscription);
+            }else {
+                // 멤버인 경우 -> 나만 탈퇴
+                subscriptionMemberRepository.delete(member);
+            }
+
+            // 정리 끝나면 데이터 삭제
+            userRepository.delete(user);
+        }
+    }
+
 }

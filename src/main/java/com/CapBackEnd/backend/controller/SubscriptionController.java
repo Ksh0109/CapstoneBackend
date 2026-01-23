@@ -8,11 +8,14 @@ import com.CapBackEnd.backend.service.SubscriptionService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
@@ -69,6 +72,26 @@ public class SubscriptionController {
         // 수정됨. Long userId = 1L;
         subscriptionService.deleteSubscription(userId, id);
         return ResponseEntity.ok().build();
+    }
+
+    // 멤버 강퇴
+    @DeleteMapping("/{id}/members/{userId}")
+    @Operation(summary = "멤버 강퇴", description = "방장이 특정 멤버를 파티에서 내보냄")
+    public ResponseEntity<?> kickMember(
+            @AuthenticationPrincipal Long leaderId,
+            @PathVariable("id") Long subscriptionId,
+            @PathVariable("userId") Long targetUserId
+    ) {
+        try {
+            subscriptionService.kickMember(leaderId, subscriptionId, targetUserId);
+            return ResponseEntity.ok(Map.of("message","해당 멤버를 내보냈습니다."));
+        }catch (AccessDeniedException e){
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(Map.of("message", e.getMessage()));
+        }catch (IllegalArgumentException e){
+            return ResponseEntity.badRequest()
+                    .body(Map.of("message", e.getMessage()));
+        }
     }
 
 }

@@ -11,6 +11,7 @@ import com.CapBackEnd.backend.repository.SubscriptionMemberRepository;
 import com.CapBackEnd.backend.repository.SubscriptionRepository;
 import com.CapBackEnd.backend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -119,5 +120,26 @@ public class SubscriptionService {
             // 멤버면 -> 나만 탈퇴 (내 명단만 삭제)
             subscriptionMemberRepository.delete(member);
         }
+    }
+
+    // 멤버 강퇴 ( 방장 권한 )
+    @Transactional
+    public void kickMember(Long leaderId, Long subscriptionId, Long targetUserId) {
+
+        SubscriptionMember leaderInfo = subscriptionMemberRepository.findByUserIdAndSubscriptionId(leaderId,subscriptionId)
+                .orElseThrow(() -> new IllegalArgumentException("구독 정보를 찾을 수 없습니다. (요청자)"));
+        if (leaderInfo.getRole() != Role.LEADER) {
+            // 방장이 아니면 권한 없음 예외 던져줌.
+            throw new AccessDeniedException("멤버를 강퇴할 권한이 없습니다.");
+        }
+        // 강퇴 대상이 방에 있는지 확인
+        SubscriptionMember targetMember = subscriptionMemberRepository.findByUserIdAndSubscriptionId(targetUserId,subscriptionId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 멤버는 이 파티에 존재하지 않습니다."));
+
+        if (targetMember.getUser().getId().equals(leaderId)) {
+            throw new IllegalArgumentException("방장은 자신을 강퇴할 수 없습니다.");
+        }
+        // 강퇴 처리
+        subscriptionMemberRepository.delete(targetMember);
     }
 }
