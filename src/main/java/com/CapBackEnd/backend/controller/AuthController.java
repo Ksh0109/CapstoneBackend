@@ -1,9 +1,6 @@
 package com.CapBackEnd.backend.controller;
 
-import com.CapBackEnd.backend.dto.AuthResponse;
-import com.CapBackEnd.backend.dto.LoginRequest;
-import com.CapBackEnd.backend.dto.PasswordResetRequest;
-import com.CapBackEnd.backend.dto.SignupRequest;
+import com.CapBackEnd.backend.dto.*;
 import com.CapBackEnd.backend.service.AuthService;
 import com.CapBackEnd.backend.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -51,4 +48,9 @@ public class AuthController {
         return ResponseEntity.ok(Map.of("message","계정이 삭제되었습니다."));
     }
 
+    @PostMapping("/social")
+    @Operation(summary = "소셜 로그인" ,description = "토큰 검증 후 소셜 로그인")
+    public ResponseEntity<AuthResponse> socialLogin(@RequestBody SocialLoginRequest request) {
+        return ResponseEntity.ok(authService.socialLogin(request));
+    }
 }
