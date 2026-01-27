@@ -9,26 +9,33 @@ import java.util.List;
 @NoArgsConstructor
 public class AiAnalysisResponse {
     private String reportMonth;
-
     private Integer currentTotal;
-    private Integer score;
     private String status;
+    private Double avgUsage;    // 평균 사용 일수
 
-    private Integer predictedTotal;
-    private String predictionComment;
-
+    // 상세 분석 리스트
+    private List<AnalyzedSubscription> subscriptions;
+    // 해지 후보
+    private List<CancelCandidate> cancelCandidates;
+    // 요약 멘트
     private String summary;
-    private String advice;
 
-    // 파이썬이 리스트로 주면, 자바가 받아서 나중에 문자열로 변환할 예정
-    private List<CategoryData> categoryList;
-
-    // 내부 클래스로 리스트 모양 정의
     @Getter
     @NoArgsConstructor
-    public static class CategoryData {
-        private String name;
-        private Integer amount;
-        private Integer percent;
+    public static class AnalyzedSubscription {
+        private Long subscriptionId;
+        private String serviceName;
+        private String category;
+        private Integer price;
+        private Integer usageDays;
+        private String subType; // "OVERSPEND" 등
+        private String advice;
+    }
+
+    @Getter
+    @NoArgsConstructor
+    public static class CancelCandidate {
+        private Long subscriptionId;
+        private String reason;
     }
 }

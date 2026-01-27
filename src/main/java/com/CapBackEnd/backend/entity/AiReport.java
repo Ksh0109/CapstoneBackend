@@ -22,40 +22,30 @@ public class AiReport {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @Column(name = "report_month")
     private String reportMonth;
-
     private Integer currentTotal;
-    private Integer score;
     private String status;
-
-    private Integer predictedTotal;
-    private String predictionComment;
-
-    private String summary;
+    private Double avgUsage;
 
     @Column(columnDefinition = "TEXT")
-    private String advice;
+    private String summary;
 
-    // 그래프 데이터
-    @Column(name = "category_json", columnDefinition = "TEXT")
-    private String categoryJson;
+    // 분석된 구독 리스트 + 해지 후보 리스트 JSON에 저장
+    @Column(columnDefinition = "TEXT")
+    private String analysisResultJson;
 
     @CreationTimestamp
     private LocalDateTime analyzedAt;
 
     @Builder
-    public AiReport(User user, String reportMonth, Integer currentTotal, Integer score, String status,
-                    Integer predictedTotal, String predictionComment, String summary, String advice, String categoryJson) {
+    public AiReport(User user, String reportMonth, Integer currentTotal, String status,
+                    Double avgUsage, String summary, String analysisResultJson) {
         this.user = user;
         this.reportMonth = reportMonth;
         this.currentTotal = currentTotal;
-        this.score = score;
         this.status = status;
-        this.predictedTotal = predictedTotal;
-        this.predictionComment = predictionComment;
+        this.avgUsage = avgUsage;
         this.summary = summary;
-        this.advice = advice;
-        this.categoryJson = categoryJson;
+        this.analysisResultJson = analysisResultJson;
     }
 }

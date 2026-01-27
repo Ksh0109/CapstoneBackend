@@ -5,8 +5,9 @@ import com.CapBackEnd.backend.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface AiReportRepository extends JpaRepository<AiReport, Long> {
     // 해당 유저의 분석 기록 다 가져오기
-    List<AiReport> findByUserOrderByAnalyzedAtDesc(User user);
+    Optional<AiReport> findByUserAndReportMonth(User user,String reportMonth);
 }
