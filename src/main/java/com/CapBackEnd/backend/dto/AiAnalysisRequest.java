@@ -16,9 +16,12 @@ public class AiAnalysisRequest {
     @Builder
     public static class SubscriptionInfo {
         private Long id;
+        private String serviceName;
         private String category;
         private Integer price;
         private String cycle;
         private Integer usageCount;
+
+        private String startDate;
     }
 }

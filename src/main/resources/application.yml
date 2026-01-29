@@ -34,11 +34,12 @@ spring:
 
 server:
   port: 8080
+  forward-headers-strategy: framework
 
 
 ai:
   server:
-    url: http://localhost:8000 # ?? ?? ??
+    url:  https://preobtrusive-tatiana-imprescriptibly.ngrok-free.dev # ?? ?? ??
 
 
 jwt:

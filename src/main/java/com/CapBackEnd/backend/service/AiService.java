@@ -63,10 +63,12 @@ public class AiService {
         List<AiAnalysisRequest.SubscriptionInfo> subInfos = members.stream()
                 .map(m -> AiAnalysisRequest.SubscriptionInfo.builder()
                         .id(m.getSubscription().getId())
+                        .serviceName(m.getSubscription().getName())
                         .category("OTT") // 수정 필요 ( Subscription 엔티티에 필드 추가하거나 이름 넣기 )
                         .price(m.getSubscription().getPrice())
                         .cycle(m.getSubscription().getCycle())
                         .usageCount(3) // 수정 필요 ( 실제 사용 횟수로 )
+                        .startDate(m.getJoinedAt().toString())
                         .build())
                 .collect(Collectors.toList());
 
