@@ -37,6 +37,7 @@ public class AiReport {
     @CreationTimestamp
     private LocalDateTime analyzedAt;
 
+    
     @Builder
     public AiReport(User user, String reportMonth, Integer currentTotal, String status,
                     Double avgUsage, String summary, String analysisResultJson) {

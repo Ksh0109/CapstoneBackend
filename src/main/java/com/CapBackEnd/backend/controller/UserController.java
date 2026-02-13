@@ -9,10 +9,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
@@ -50,5 +47,13 @@ public class UserController {
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
         }
+    }
+
+    // 이메일로 ID 찾기 API
+    @GetMapping("/api/user/id")
+    @Operation(summary = "아이디 찾기", description = "입력된 이메일 기준으로 아이디 반환")
+    public ResponseEntity<Long> getUserId(@RequestParam String email) {
+        Long userId = userService.findUserIdByEmail(email);
+        return ResponseEntity.ok(userId);
     }
 }
