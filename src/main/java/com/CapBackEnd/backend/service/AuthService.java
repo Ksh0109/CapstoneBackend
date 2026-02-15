@@ -27,6 +27,7 @@ public class AuthService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
+    private final EmailService emailService;
 
     @Value("${google.client-id}")
     private String googleClientId;
@@ -34,12 +35,19 @@ public class AuthService {
     // 회원가입
     @Transactional
     public AuthResponse signup(SignupRequest request) {
+        // 이메일 인증 여부 확인
+        if(!emailService.isVerified(request.getEmail())) {
+            throw new IllegalArgumentException("이메일 인증이 완료되지 않았습니다.");
+        }
         // 이메일 중복 검사
         if(userRepository.findByEmail(request.getEmail()).isPresent()) {
             throw new IllegalArgumentException("이미 가입된 이메일입니다");
         }
         // 유저 저장 ( pw 암호화는 DTO 안에서 함 )
         User user = userRepository.save(request.toEntity(passwordEncoder));
+
+        // 인증 상태 제거
+        emailService.removeVerified(request.getEmail());
 
         // 가입 성공하면 바로 로그인 처리
         String token = jwtTokenProvider.createToken(user.getId());

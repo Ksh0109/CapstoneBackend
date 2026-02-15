@@ -2,6 +2,7 @@ package com.CapBackEnd.backend.controller;
 
 import com.CapBackEnd.backend.dto.*;
 import com.CapBackEnd.backend.service.AuthService;
+import com.CapBackEnd.backend.service.EmailService;
 import com.CapBackEnd.backend.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -20,9 +21,24 @@ public class AuthController {
 
     private final AuthService authService;
     private final UserService userService;
+    private final EmailService emailService;
+
+    @PostMapping("/email/send")
+    @Operation(summary = "이메일 인증 코드 발송", description = "입력한 이메일로 6자리 인증 코드를 발송합니다. 유효 시간 3분.")
+    public ResponseEntity<?> sendEmailCode(@RequestBody EmailCodeRequest request) {
+        emailService.sendVerificationCode(request.getEmail());
+        return ResponseEntity.ok(Map.of("message", "인증 코드가 이메일로 전송되었습니다."));
+    }
+
+    @PostMapping("/email/verify")
+    @Operation(summary = "이메일 인증 코드 확인", description = "발송된 인증 코드를 검증합니다.")
+    public ResponseEntity<?> verifyEmailCode(@RequestBody EmailVerifyRequest request) {
+        emailService.verifyCode(request.getEmail(), request.getCode());
+        return ResponseEntity.ok(Map.of("message", "이메일 인증이 완료되었습니다."));
+    }
 
     @PostMapping("/signup")
-    @Operation(summary = "회원가입", description = "회원가입 성공 시 토큰과 유저 정보를 반환")
+    @Operation(summary = "회원가입", description = "이메일 인증 완료 후 회원가입. 성공 시 토큰과 유저 정보를 반환.")
     public ResponseEntity<AuthResponse> signup(@RequestBody SignupRequest request) {
         return ResponseEntity.ok(authService.signup(request));
     }
