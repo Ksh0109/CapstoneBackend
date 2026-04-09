@@ -39,7 +39,7 @@ server:
 
 ai:
   server:
-    url:  https://preobtrusive-tatiana-imprescriptibly.ngrok-free.dev # ?? ?? ??
+    url: ${AI_SERVER_URL}
 
 
 jwt:

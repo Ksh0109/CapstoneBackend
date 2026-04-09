@@ -12,4 +12,7 @@ public interface FriendRepository extends JpaRepository<Friend,Long> {
 
     // 이미 친구인지 확인용
     boolean existsByFromUserAndToUser(User fromUser, User toUser);
+
+    // 계정 삭제 시 양방향 친구 관계 정리용
+    List<Friend> findAllByToUser(User toUser);
 }
